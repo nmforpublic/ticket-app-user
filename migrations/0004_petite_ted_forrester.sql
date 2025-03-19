@@ -1,0 +1,1 @@
+ALTER TABLE "events" ALTER COLUMN "ticket_price" SET DATA TYPE integer;
