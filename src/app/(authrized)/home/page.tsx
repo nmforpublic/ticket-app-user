@@ -47,7 +47,7 @@ export default async function HomePage() {
 
           {/* User Info Card */}
           <Card className="w-full rounded-lg border-0 flex flex-col items-start justify-center px-6 py-4 gap-2">
-          <p className="font-bold">{userData.data.profile.display_name} 様</p>
+          <p className="font-bold">{userData?.data?.profile && typeof userData.data.profile === 'object' && 'display_name' in userData.data.profile ? String(userData.data.profile.display_name) : ''} 様</p>
           <div className="w-full flex items-center justify-between flex-row">
 
           <p className="text-sm text-gray-500">アプリID: {data.user?.id ? `${data.user.id.slice(0,5)}...${data.user.id.slice(-5)}` : ''}</p>

@@ -10,7 +10,7 @@ import {
   createSuccessResponse, 
   createErrorResponse 
 } from './error';
-import type { LineUser } from "@/type/user";
+import { LineUser } from '@/types/user';
 
 // UserAuthsの型定義
 export type UserAuthsInfo = {

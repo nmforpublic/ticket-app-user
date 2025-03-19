@@ -1,5 +1,5 @@
 'use server';
-import type { LineUser } from "@/type/user";
+import { LineUser } from "@/types/user";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 import {
