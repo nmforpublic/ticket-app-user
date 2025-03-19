@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Link from 'next/link'
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from '@/utils/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Sidebar } from '@/components/sidebar'
 import { IconSeparator } from '@/components/ui/icons'

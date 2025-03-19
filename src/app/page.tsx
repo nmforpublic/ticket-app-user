@@ -1,101 +1,93 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import liff from "@line/liff";
+import { Loader } from 'lucide-react';
+
+
+
+// LINEプロフィールの型定義
+interface LineProfile {
+  userId: string;
+  displayName: string;
+  pictureUrl?: string;
+  statusMessage?: string;
+}
+
+// According to this document, https://developers.line.biz/en/docs/liff/opening-liff-app/#redirect-flow, liff.init() should be called in `/`
+// This page is only used for liff login.
+// setupLiff redirects after liff.init() is called to purpose of path.
+export default function LiffInitPage() {
+  const [status, setStatus] = useState<string>("初期化中...");
+  const [error, setError] = useState<string | null>(null);
+  const [userProfile, setUserProfile] = useState<LineProfile | null>(null);
+
+
+  useEffect(() => {
+    // LIFFの初期化とログイン処理
+    const initLiff = async () => {
+      try {
+        console.log("LIFF初期化開始");
+        
+        // LIFF IDの確認
+        const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
+        if (!liffId) {
+          throw new Error("LIFF IDが設定されていません");
+        }
+        
+        // LIFF初期化
+        await liff.init({ liffId });
+        console.log("LIFF初期化完了");
+        
+        // ログイン状態の確認
+        if (!liff.isLoggedIn()) {
+          console.log("LINEログインが必要です - ログイン処理を開始します");
+          setStatus("LINEでログインします...");
+          
+          // リダイレクトURIを現在のページに設定（初期化用ページに戻る）
+          const redirectUri = window.location.href;
+          liff.login({ redirectUri });
+          return; // ログイン処理後はここで終了（リダイレクトが発生するため）
+        }
+        
+        // ログイン済みならユーザー情報取得
+        console.log("ログイン済み - ユーザー情報を取得します");
+        // この部分でアクセストークンをログ出力して確認
+        const token = liff.getAccessToken();
+        console.log("LINE Access Token:", token ? "取得成功" : "取得失敗", token && token.substring(0, 10) + "...");
+        
+        const profile = await liff.getProfile();
+        console.log("LINEユーザー情報:", profile);
+        setUserProfile(profile);
+        setStatus(`${profile.displayName}さんとして認証完了`);
+        
+        // ホームページへリダイレクト（認証完了後）
+        setTimeout(() => {
+          console.log("ホームページへリダイレクト");
+          window.location.href = "/home";
+        }, 1000);
+      } catch (error) {
+        console.error("LIFFエラー:", error);
+        setStatus("エラーが発生しました");
+        setError(error instanceof Error ? error.message : String(error));
+      }
+    };
+    
+    initLiff();
+  }, []);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div className="flex items-center justify-center h-screen">
+      <div className="text-center">
+        <p className="mt-4 text-base font-bold">
+          Loading...
+        </p>
+        {error && (
+          <p className="mt-2 text-sm text-red-600">
+            エラー: {error}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
