@@ -27,16 +27,18 @@ export function InvitationCodeForm() {
     resolver: zodResolver(invitationCodeSchema),
   })
   
-  async function onSubmit(formData: FormData) {
+  const onSubmit = handleFormSubmit(async (data) => {
     try {
+      const formData = new FormData()
+      formData.append('code', data.code)
       await handleSubmit(formData)
     } catch (e) {
       setError(e instanceof Error ? e.message : "エラーが発生しました")
     }
-  }
+  })
   
   return (
-    <form action={onSubmit} className="space-y-4">
+    <form onSubmit={onSubmit} className="space-y-4">
       {error && (
         <div className="rounded-md border border-red-500/50 px-4 py-3 text-red-600">
           <p className="text-sm">
