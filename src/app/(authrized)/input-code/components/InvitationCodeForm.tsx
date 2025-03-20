@@ -20,6 +20,8 @@ type InvitationCodeFormValues = z.infer<typeof invitationCodeSchema>
 export function InvitationCodeForm() {
   const [error, setError] = useState<string | null>(null)
   const {
+    register,
+    handleSubmit: handleFormSubmit,
     formState: { errors },
   } = useForm<InvitationCodeFormValues>({
     resolver: zodResolver(invitationCodeSchema),
@@ -47,7 +49,7 @@ export function InvitationCodeForm() {
         <Label htmlFor="code">コード</Label>
         <Input
           id="code"
-          name="code"
+          {...register("code")}
           placeholder="Test1234"
         />
         {errors.code && (
