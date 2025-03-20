@@ -94,6 +94,7 @@ async function CreateUser(
   supabase: SupabaseClient,
   profile: LineProfile
 ): Promise<string> {
+  console.log("[DEBUG] Creating new user:", profile);
   const { data: createdUser, error: createError } =
     await supabase.auth.admin.createUser({
       email: `${profile.userId}@line.com`,
@@ -110,7 +111,9 @@ async function CreateUser(
     });
 
   if (createError || !createdUser?.user) {
+    console.error("[ERROR] Failed to create user:", createError);
     throw new Error("Failed to create user");
+
   }
 
   const user = createUserObject(profile, createdUser.user.id);
