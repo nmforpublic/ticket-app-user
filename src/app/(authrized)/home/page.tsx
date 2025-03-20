@@ -51,7 +51,7 @@ export default async function HomePage() {
           <div className="w-full flex items-center justify-between flex-row">
 
           <p className="text-sm text-gray-500">アプリID: {data.user?.id ? `${data.user.id.slice(0,5)}...${data.user.id.slice(-5)}` : ''}</p>
-          <CopyButton />
+          <CopyButton textToCopy={data.user?.id || ''} />
           </div>
           <Button className="w-full mt-3">QRコード再生成</Button>
           </Card>

@@ -11,12 +11,16 @@ import {
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 
-export default function CopyButton() {
+interface CopyButtonProps {
+  textToCopy: string;
+}
+
+export default function CopyButton({ textToCopy }: CopyButtonProps) {
   const [copied, setCopied] = useState<boolean>(false);
 
   const handleCopy = async () => {
     try {
-      // await navigator.clipboard.writeText("string to copy");
+      await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch (err) {
