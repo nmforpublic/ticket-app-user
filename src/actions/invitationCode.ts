@@ -95,24 +95,8 @@ export const redeemInvitationCode = async (
 
   // 3. ゲスト招待系 (例: 'guest_invitation')
   else if (codeRow.code_type === 'guest_invitation') {
-    const ticketInsert = await db.insert(tickets).values({
-      event_id: codeRow.event_id!,
-      owner_user_id: userId,
-      ticket_type: 'guest',
-      status: 'active',
-      issued_by: null,
-    });
-
-    await db
-      .update(invitationCodes)
-      .set({ is_active: false })
-      .where(eq(invitationCodes.id, codeRow.id));
-
-    return createSuccessResponse('ゲストチケットを発行しました', {
-      eventId: codeRow.event_id ?? null
-    });
+    console.log('ゲスト招待コードの処理');
   }
-
   return createErrorResponse(
     '不明なコードタイプです',
     createError(ErrorCode.INVALID_INPUT, `code_type: ${codeRow.code_type} は処理できません`)

@@ -33,7 +33,7 @@ export default function CopyButton({ textToCopy }: CopyButtonProps) {
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
             className="disabled:opacity-100"
             onClick={handleCopy}

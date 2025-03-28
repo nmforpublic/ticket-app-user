@@ -1,10 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
 import { getUserAuthsBySupabaseId } from "@/actions/user";
 import { Card } from "@/components/ui/card";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import CopyButton from "./copy-button";
+import { UserRoundIcon } from "lucide-react";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -16,17 +17,52 @@ export default async function HomePage() {
   console.log("me", userData);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col">
       {/* Fixed top section with gradient background */}
-      <div
-        className="relative h-[55vh] flex-shrink-0 rounded-bl-lg rounded-br-lg"
-        style={{
-          background: "linear-gradient(135deg, rgba(28, 28, 28, 0.76), rgba(28, 28, 28, 1))",
-        }}
-      >
-        <div className="flex flex-col items-center pt-8 px-6 h-full pb-10">
+      <div className="bg-gradient-to-bl from-[#ffe4e6]  to-[#ccfbf1] rounded-bl-lg rounded-br-lg">
+        <div className="flex flex-col items-center p-6 h-full">
+          {/* User Avatar */}
+          <Avatar className="w-20 h-20 mb-4">
+            <AvatarImage
+              src={
+                userData?.data?.profile &&
+                typeof userData.data.profile === "object" &&
+                "picture_url" in userData.data.profile
+                  ? String(userData.data.profile.picture_url)
+                  : ""
+              }
+              alt="User avatar"
+            />
+            <AvatarFallback>
+              <UserRoundIcon
+                size={16}
+                className="opacity-60"
+                aria-hidden="true"
+              />
+            </AvatarFallback>
+          </Avatar>
+
+          {/* User info */}
+          <p className="font-bold">
+              {userData?.data?.profile &&
+              typeof userData.data.profile === "object" &&
+              "display_name" in userData.data.profile
+                ? String(userData.data.profile.display_name)
+                : ""}{" "}
+            </p>
+            <div className="flex items-center justify-between flex-row gap-2 mb-6">
+              <p className="text-sm text-gray-500">
+                アプリID:{" "}
+                {data.user?.id
+                  ? `${data.user.id.slice(0, 5)}...${data.user.id.slice(-5)}`
+                  : ""}
+              </p>
+              <CopyButton textToCopy={data.user?.id || ""} />
+            </div>
+
+
           {/* QR Code */}
-          <div className="bg-white p-4 rounded-lg mb-6 w-48 h-48 flex items-center justify-center">
+          <div className="bg-white p-4 rounded-lg w-48 h-48 flex items-center justify-center">
             <div className="w-40 h-40 bg-white">
               {/* Placeholder QR code */}
               <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -45,16 +81,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* User Info Card */}
-          <Card className="w-full rounded-lg border-0 flex flex-col items-start justify-center px-6 py-4 gap-2">
-          <p className="font-bold">{userData?.data?.profile && typeof userData.data.profile === 'object' && 'display_name' in userData.data.profile ? String(userData.data.profile.display_name) : ''} 様</p>
-          <div className="w-full flex items-center justify-between flex-row">
-
-          <p className="text-sm text-gray-500">アプリID: {data.user?.id ? `${data.user.id.slice(0,5)}...${data.user.id.slice(-5)}` : ''}</p>
-          <CopyButton textToCopy={data.user?.id || ''} />
-          </div>
-          <Button className="w-full mt-3">QRコード再生成</Button>
-          </Card>
+            <Button className="w-full mt-6 py-6" >QRコード再生成</Button>
         </div>
       </div>
 
@@ -73,7 +100,9 @@ export default async function HomePage() {
                 <div className="text-sm font-medium">+ 100 pt</div>
               </div>
               <div className="mt-2">
-                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">友達招待</span>
+                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                  友達招待
+                </span>
               </div>
             </div>
           </div>
@@ -122,5 +151,5 @@ export default async function HomePage() {
         ))}
       </div>
     </div>
-  )
+  );
 }
