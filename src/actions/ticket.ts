@@ -1,3 +1,4 @@
+'use server'
 import { db } from "@/db/drizzle";
 import { tickets, events, eventTicketAllocations, userAuths, organizationUsers } from "@/db/schema";
 import { eq, and, inArray } from "drizzle-orm";

@@ -1,19 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
-import { getOrganizationUserByAuthId } from '@/actions/admin/organizationUsers';
-import { createInvitationCode } from '@/actions/user/invitationCode';
+import { createClient } from '@/utils/supabase/client';
+import { getOrganizationUserByAuthId } from '@/actions/organizationUser';
+import { createInvitationCode } from '@/actions/invitationCode';
 import { toast } from 'sonner';
+import { useId, useState } from "react";
+import {
+  MinusIcon,
+  PlusIcon,
+} from "lucide-react"
 
-export default function CreateCode() {
+export default function CreateCode({ remaining, alloId, userorgId, eventId}: { remaining?: string; alloId?: string, userorgId?: string; eventId?: string}) {
+  const id = useId();
   const [code, setCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [ticketAmount, setTicketAmount] = useState(1) // Initialize volume state (0-9)
+
+  const decreaseAmount = () => setTicketAmount((prev) => Math.max(0, prev - 1))
+  const increaseAmount = () => setTicketAmount((prev) => Math.min(remaining ? parseInt(remaining) : 0, prev + 1))
+
+
 
   const handleCreateCode = async () => {
     setLoading(true);
@@ -27,19 +39,22 @@ export default function CreateCode() {
         throw new Error('ユーザー情報を取得できませんでした');
       }
 
-      const orgUserResponse = await getOrganizationUserByAuthId(user.id);
-      if (!orgUserResponse.success || !orgUserResponse.data?.[0]) {
-        throw new Error('組織ユーザー情報を取得できませんでした');
+      if (!alloId || !userorgId || !eventId) {
+        setError('チケット割り当てID、ユーザー組織ID、またはイベントIDが見つかりません');
+        return;
       }
 
-      const organizationUserId = orgUserResponse.data[0].userId;
+
       const organizationId = 1; // 固定値
-      const codeType = 'operator_invitation';
+      const codeType = 'guest_invitation';
 
       const result = await createInvitationCode(
-        organizationUserId,
+        parseInt(userorgId),
         organizationId,
-        codeType
+        codeType,
+        parseInt(eventId),
+        ticketAmount,
+        parseInt(alloId)
       );
 
       if (!result.success || !result.data?.code) {
@@ -72,7 +87,53 @@ export default function CreateCode() {
 
   return (
     <div className="flex flex-col gap-4 container mx-auto px-4 py-8 overflow-auto w-full">
-      <p className='text-gray-500'>下記のボタンを押して、招待コードを作成してください</p>
+      <>
+        <Label htmlFor={id} className="font-bold">チケット枚数を指定</Label>
+        <div className="flex items-center justify-between flex-row gap-4 mb-6 w-full">
+          <p className="text-base font-bold text-gray-500">
+            チケット枚数:
+          </p>
+
+          <div
+            className="inline-flex items-center"
+            role="group"
+            aria-labelledby="ticket-control"
+          >
+            <span id="ticket-control" className="sr-only">
+              ticket Control
+            </span>
+            <Button
+              className="rounded-full"
+              variant="outline"
+              size="icon"
+              aria-label="Decrease ticket"
+              onClick={decreaseAmount}
+              disabled={ticketAmount === 1}
+            >
+              <MinusIcon size={16} aria-hidden="true" />
+            </Button>
+            <div
+              className="flex items-center px-3 text-sm font-medium tabular-nums"
+              aria-live="polite"
+            >
+              <span>
+                {ticketAmount}
+              </span>
+            </div>
+            <Button
+              className="rounded-full"
+              variant="outline"
+              size="icon"
+              aria-label="Increase ticket"
+              onClick={increaseAmount}
+              disabled={ticketAmount === (remaining ? parseInt(remaining) : 0)}
+            >
+              <PlusIcon size={16} aria-hidden="true" />
+            </Button>
+          </div>
+        </div>
+      </>
+      <p className='text-gray-500 text-xs text-center'>下記のボタンを押して、招待コードを作成してください</p>
           <Button 
             onClick={handleCreateCode}
             disabled={loading}

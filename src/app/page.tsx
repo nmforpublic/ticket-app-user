@@ -67,9 +67,15 @@ export default function LiffInitPage() {
           window.location.href = "/home";
         }, 1000);
       } catch (error) {
-        console.error("LIFFエラー:", error);
-        setStatus("エラーが発生しました");
-        setError(error instanceof Error ? error.message : String(error));
+        if (error instanceof Error && error.message === "The access token revoked") {
+          // アクセストークンが無効の場合、キャッシュをクリアして再ログインを促す
+          liff.logout();
+          liff.login({ redirectUri: window.location.href });
+        } else {
+          // その他のエラー処理
+          setStatus("エラーが発生しました");
+          setError(error instanceof Error ? error.message : String(error));
+        }
       }
     };
     

@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import IDSearchPage from "./id-search";
-// import CreateCode from "./create-code";
+import CreateCode from "./create-code";
 
 
 interface InvitePageProps {
@@ -39,10 +39,10 @@ export default async function InvitePage({
         <TabsTrigger value="tab-2" className="font-bold w-full">コード発行</TabsTrigger>
       </TabsList>
       <TabsContent value="tab-1" className="w-full">
-        <IDSearchPage remaining={remaining} alloId={alloId} userorgId={userorgId}/>
+        <IDSearchPage remaining={remaining} alloId={alloId} userorgId={userorgId} eventId={eventId}/>
       </TabsContent>
       <TabsContent value="tab-2" className="w-full">
-        {/* <CreateCode /> */}
+        <CreateCode remaining={remaining} alloId={alloId} userorgId={userorgId} eventId={eventId}/>
       </TabsContent>
     </Tabs>
         </div>

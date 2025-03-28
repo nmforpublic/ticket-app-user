@@ -42,9 +42,10 @@ export const organizationUsers = pgTable(
   id: serial("id").primaryKey(),
   organization_id: integer("organization_id").notNull(),
   user_id: integer("user_id").notNull(),
-  role: varchar("role", { length: 50 }).notNull(), // 例: 'admin', 'operator', 'user'
+  role: varchar("role", { length: 50 }).notNull(), // 例: 'admin', 'operator'
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updated_at: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  is_active: boolean("is_active").default(true).notNull(),
 },
 (t) => ({
   unique_org_user: unique("unique_org_user").on(t.organization_id, t.user_id),

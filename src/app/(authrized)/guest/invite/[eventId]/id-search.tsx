@@ -14,6 +14,7 @@ import { getUserAuthsBySupabaseId } from "@/actions/user";
 import { UserAuthsInfo } from "@/types/user";
 import { inviteGuests } from "@/actions/guestInvitation";
 
+
 import {
   MinusIcon,
   PlusIcon,
@@ -25,8 +26,9 @@ const isValidUUID = (uuid: string): boolean => {
   return uuidRegex.test(uuid);
 };
 
-export default function IDSearchPage({ remaining, alloId, userorgId}: { remaining?: string; alloId?: string, userorgId?: string }) {
+export default function IDSearchPage({ remaining, alloId, userorgId, eventId}: { remaining?: string; alloId?: string, userorgId?: string; eventId?: string}) {
   const id = useId();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResult, setSearchResult] = useState<UserAuthsInfo | null>(null);
   const [isSelected, setIsSelected] = useState(false);
@@ -43,8 +45,8 @@ export default function IDSearchPage({ remaining, alloId, userorgId}: { remainin
   const handleInvite = async () => {
     if (!searchResult) return;
   
-    if (!alloId || !userorgId) {
-      setError('チケット割り当てIDまたはユーザー組織IDが見つかりません');
+    if (!alloId || !userorgId || !eventId) {
+      setError('チケット割り当てID、ユーザー組織ID、またはイベントIDが見つかりません');
       return;
     }
 
@@ -55,7 +57,7 @@ export default function IDSearchPage({ remaining, alloId, userorgId}: { remainin
         allocationId: parseInt(alloId),
         guestAuthId: searchTerm,
         ticketCount: ticketAmount,
-        reason: 'ゲスト招待',
+        reason: `イベントID:${eventId}のゲスト招待`,
         changedByOrgUserId: parseInt(userorgId)
       });
 
