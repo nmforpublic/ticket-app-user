@@ -44,7 +44,6 @@ export default async function HomePage() {
           {/* User Avatar */}
           <Avatar className="w-20 h-20 mb-4">
             <AvatarImage
-              asChild
               src={
                 userData?.data?.profile &&
                 typeof userData.data.profile === "object" &&
@@ -53,18 +52,6 @@ export default async function HomePage() {
                   : ""
               }
               alt="User avatar"
-            />
-            <Image
-              src={
-                userData?.data?.profile &&
-                typeof userData.data.profile === "object" &&
-                "picture_url" in userData.data.profile
-                  ? String(userData.data.profile.picture_url)
-                  : ""
-              }
-              alt="logo"
-              width={40}
-              height={40}
             />
             <AvatarFallback>
               <UserRoundIcon
@@ -140,10 +127,10 @@ export default async function HomePage() {
                     className="w-full mb-4 p-4 shadow-sm"
                   >
                     <div className="flex items-center">
-                      <div className="w-16 h-16 rounded-lg mr-4 bg-gradient-to-br from-pink-500 to-purple-600">
+                      <div className="w-16 h-16 rounded-lg mr-4 bg-gradient-to-br from-pink-500 to-purple-600 overflow-hidden">
                         {groupedTicket.event.image_url && (
                           <Image
-                            className="rounded-lg"
+                            className="rounded-lg object-cover w-full h-full"
                             src={groupedTicket.event.image_url}
                             alt="eventPhoto"
                             width={64}
