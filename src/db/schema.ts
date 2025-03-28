@@ -175,9 +175,15 @@ export const invitationCodes = pgTable(
     code_type: varchar("code_type", { length: 50 }).notNull(),
 
     created_by: integer("created_by").notNull(), // organization_users.id
-
+    
+    
     // 単発利用ならtrue/falseで管理
     is_active: boolean("is_active").default(true).notNull(),
+    
+    // 招待コードで発行できるチケット数
+    ticket_amount: integer("ticket_amount"),
+    // 招待コードを発行した運営者のallocation_id
+    allocation_id: integer("allocation_id"),
 
     created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updated_at: timestamp("updated_at", { withTimezone: true }).defaultNow(),
