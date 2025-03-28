@@ -13,6 +13,7 @@ import { CircleAlert } from "lucide-react";
 import { getUserAuthsBySupabaseId } from "@/actions/user";
 import { UserAuthsInfo } from "@/types/user";
 import { inviteGuests } from "@/actions/guestInvitation";
+import Image from "next/image";
 
 
 import {
@@ -170,10 +171,11 @@ export default function IDSearchPage({ remaining, alloId, userorgId, eventId}: {
             onCheckedChange={(checked) => setIsSelected(!!checked)}
             />
           <Avatar className="shrink-0">
-            <AvatarImage 
+            <AvatarImage asChild
               src={searchResult.profile.picture_url as string} 
               alt={searchResult.profile.display_name as string} 
               />
+              <Image src={searchResult.profile.picture_url as string} alt="logo" width={40} height={40} />
             <AvatarFallback>{searchResult.profile.display_name as string}</AvatarFallback>
           </Avatar>
           <div className="min-w-0">
